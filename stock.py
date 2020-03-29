@@ -2,8 +2,9 @@ import pandas as pd
 from random import choice
 from random import randint
 from itertools import accumulate
-from datetime import datetime,time
+from datetime import datetime,time   ,timedelta
 from matplotlib import pyplot as plt
+import matplotlib.dates as mdates
 from matplotlib import dates
 plt.style.use('seaborn-darkgrid')
 inf = 99999999999999
@@ -28,7 +29,6 @@ def scatmake(df,plist):
     for k in plist:
         d[k] = df[k]
     return d
-
 
 mx = []
 mn = []
@@ -66,9 +66,15 @@ def graph(df,low,high,peak,truf,short=0,window = 30):
             elif x < y :
                 graph(df, s+1 , b-1 , peak, truf, 1, window)
 
-def clean(s):
-    x,y =s.split(':')
-    return datetime(1,1,1,int(x),int(y))
+def clean(s,today):
+    today = str(today)
+    year = int(today[0:4])
+    month = int(today[4:6])
+    day = int(today[6:])
+    hour,minute,*second =s.split(':')
+    if len(second) == 0:
+        second.append(0)
+    return datetime(year,month,day,int(hour),int(minute),int(second[0]))
 
 def get_today_df(company_name='nifty',today = 20140505):
     base = 'dataset'
@@ -77,7 +83,10 @@ def get_today_df(company_name='nifty',today = 20140505):
     today = choice(list(set(data['date'])))
     flt = (data['date'] == today)
     todaydf = data.loc[flt]
-    time = todaydf['time'].apply(clean)
+
+    time = todaydf['time'].apply(lambda x:clean(x,today))
+    time = [ts.to_pydatetime()   for ts in time]
+
     close = list(todaydf['close'])
     idxtime = {}
     idxclose = {}
@@ -86,29 +95,42 @@ def get_today_df(company_name='nifty',today = 20140505):
         idxclose[idx] = tc[1]
     return idxclose, idxtime
 
+def matplot(df,time):
+    global mx,mn
+    plt.plot(time, df.values())
+    plt.scatter(time,scatmake(df,mx),c='g')
+    plt.scatter(time,scatmake(df,mn),c='r')
+    plt.legend(['Stock','Sell','Buy'])
+    plt.xlabel('Time')
+    plt.ylabel('Stock price')
+    plt.title('Hello')
+    plt.gcf().autofmt_xdate()
+    myFmt = mdates.DateFormatter('%H:%M')
+    plt.gca().xaxis.set_major_formatter(myFmt)
+    plt.show()
+    
 def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window = 30):
     global mx,mn
     df, idxtime= get_today_df(company_name,0)
     time = list(idxtime.values())
-
 
     peak,truf = gen_peaks(df)
     graph(df,0,len(df),peak,truf,want_to_short,window)
     mxmn = sorted(zip(mx,mn,short_not),key=lambda x:money(x[0],x[1],df),reverse=True)[:num_of_points]
     mx, mn ,sn= zip(*mxmn)
 
-    # plt.plot(time, df.values())
-    # plt.scatter(time,scatmake(df,mx),c='g')
-    # plt.scatter(time,scatmake(df,mn),c='r')
-    # plt.legend(['Stock','Sell','Buy'])
-    # plt.xlabel('Time')
-    # plt.ylabel('Stock price')
-    # plt.show()
+    matplot(df,time)
 
-    print('Point1,point2, isshort','money u made')
-    for g,r,p in zip(mn,mx,sn):
-        print(idxtime[g],idxtime[r],p,money(g,r,df))
+    bestpts = []
+    for buy,sell,short in zip(mn,mx,sn):
+        bestpts.append( {
+            'Buy': buy,
+            'Sell':sell,
+            'Short':short,
+            'Predicted_Money': money(buy,sell,df),
+        })
 
+    print(bestpts)
 
 if __name__ == '__main__':
     bestpoints('nifty',
