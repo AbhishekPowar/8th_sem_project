@@ -70,9 +70,11 @@ def clean(s):
     x,y =s.split(':')
     return datetime(1,1,1,int(x),int(y))
 
-def bestpoints(filename='nifty.csv',want_to_short = 0,num_of_points = 3,window = 30):
+def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window = 30):
     global mx,mn
-    data = pd.read_csv(filename)
+    base = 'dataset'
+    path = base+f"""/{company_name}/{company_name}.csv"""
+    data = pd.read_csv(path)
     today = choice(list(set(data['date'])))
     flt = (data['date'] == today)
     todaydf = data.loc[flt]
@@ -110,7 +112,7 @@ def bestpoints(filename='nifty.csv',want_to_short = 0,num_of_points = 3,window =
 
 
 if __name__ == '__main__':
-    bestpoints('nifty.csv',
+    bestpoints('nifty',
                want_to_short=1,
                num_of_points=4,
                window=1)
