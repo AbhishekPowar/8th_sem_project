@@ -70,42 +70,41 @@ def clean(s):
     x,y =s.split(':')
     return datetime(1,1,1,int(x),int(y))
 
-def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window = 30):
-    global mx,mn
+def get_today_df(company_name='nifty',today = 20140505):
     base = 'dataset'
-    path = base+f"""/{company_name}/{company_name}.csv"""
+    path = base + f"""/{company_name}/{company_name}.csv"""
     data = pd.read_csv(path)
     today = choice(list(set(data['date'])))
     flt = (data['date'] == today)
     todaydf = data.loc[flt]
-
-
     time = todaydf['time'].apply(clean)
     close = list(todaydf['close'])
     idxtime = {}
     idxclose = {}
-    for idx,tc in enumerate(zip(time,close)):
+    for idx, tc in enumerate(zip(time, close)):
         idxtime[idx] = tc[0]
         idxclose[idx] = tc[1]
-    df = idxclose
+    return idxclose, idxtime
 
+def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window = 30):
+    global mx,mn
+    df, idxtime= get_today_df(company_name,0)
+    time = list(idxtime.values())
 
-
-
-
-    # time = list(range(len(df)))
-    plt.plot(time, df.values())
 
     peak,truf = gen_peaks(df)
     graph(df,0,len(df),peak,truf,want_to_short,window)
     mxmn = sorted(zip(mx,mn,short_not),key=lambda x:money(x[0],x[1],df),reverse=True)[:num_of_points]
     mx, mn ,sn= zip(*mxmn)
-    plt.scatter(time,scatmake(df,mx),c='g')
-    plt.scatter(time,scatmake(df,mn),c='r')
-    plt.legend(['Stock','Sell','Buy'])
-    plt.xlabel('Time')
-    plt.ylabel('Stock price')
-    plt.show()
+
+    # plt.plot(time, df.values())
+    # plt.scatter(time,scatmake(df,mx),c='g')
+    # plt.scatter(time,scatmake(df,mn),c='r')
+    # plt.legend(['Stock','Sell','Buy'])
+    # plt.xlabel('Time')
+    # plt.ylabel('Stock price')
+    # plt.show()
+
     print('Point1,point2, isshort','money u made')
     for g,r,p in zip(mn,mx,sn):
         print(idxtime[g],idxtime[r],p,money(g,r,df))
@@ -113,6 +112,6 @@ def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window =
 
 if __name__ == '__main__':
     bestpoints('nifty',
-               want_to_short=1,
-               num_of_points=4,
-               window=1)
+               want_to_short=0,
+               num_of_points=3,
+               window=30)
