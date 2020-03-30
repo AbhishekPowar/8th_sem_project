@@ -19,5 +19,5 @@ from . import views
 
 urlpatterns = [
     path('', views.index),
-    path('data',views.actual_data)
+    path('invest',views.invest)
 ]

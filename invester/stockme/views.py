@@ -1,11 +1,17 @@
 from django.shortcuts import render
+from os import listdir
 from django.http import HttpResponse
 from . import stock
 import json
 # Create your views here.
 def index(request):
-    s = stock.bestpoints('nifty')
-    return  HttpResponse(s)
+    company_names = listdir('./dataset')
+    return  render(request,'index.html',{'company_names':company_names})
+
+
+def invest(request):
+    actual_points = stock.bestpoints('nifty')
+    return render(request,'invest.html',actual_points)
 
 def actual_data(request):
     close, time = stock.get_today_df('nifty')
@@ -13,4 +19,4 @@ def actual_data(request):
         "close":close,
         "time" :time
     }
-    return HttpResponse(json.dumps(mydict))
+    return render(request,'home.html',mydict)

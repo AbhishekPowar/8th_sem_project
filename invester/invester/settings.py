@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'stockme'
 ]
 
 MIDDLEWARE = [
@@ -66,7 +67,7 @@ TEMPLATES = [
         },
     },
 ]
-
+TEMPLATE_DIRS = [BASE_DIR+'templates']
 WSGI_APPLICATION = 'invester.wsgi.application'
 
 

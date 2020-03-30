@@ -148,7 +148,7 @@ def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window =
             "Actual_money": money(buy,sell,df),
         })
     my_dict["actual"] = actual_invest_points
-    return json.dumps(my_dict)
+    return my_dict
 
 if __name__ == '__main__':
     bestpoints('nifty',
