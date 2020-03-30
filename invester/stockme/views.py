@@ -15,8 +15,10 @@ def invest(request):
 
 def actual_data(request):
     close, time = stock.get_today_df('nifty')
+    clor = '#3cba9f' if close[-1] > close[0] else '#FF6347'
     mydict = {
         "close":close,
         "time" :time
     }
-    return render(request,'home.html',mydict)
+    return render(request,'pie.html',{'labels': time,
+        'data': close,'clr':clor})
