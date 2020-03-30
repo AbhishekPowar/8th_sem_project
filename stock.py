@@ -1,14 +1,14 @@
 import pandas as pd
 from random import choice
-from random import randint
-from itertools import accumulate
-from datetime import datetime,time   ,timedelta
+from datetime import datetime
 from matplotlib import pyplot as plt
 import matplotlib.dates as mdates
-from matplotlib import dates
 plt.style.use('seaborn-darkgrid')
 inf = 99999999999999
 ninf = -inf
+mx = list()
+mn = list()
+short_not  = list()
 
 def money(x,y,df):
     return round(abs(df[x]-df[y]),2)
@@ -30,9 +30,8 @@ def scatmake(df,plist):
         d[k] = df[k]
     return d
 
-mx = []
-mn = []
-short_not  = []
+
+
 def graph(df,low,high,peak,truf,short=0,window = 30):
     global mx,mn
 
@@ -76,6 +75,15 @@ def clean(s,today):
         second.append(0)
     return datetime(year,month,day,int(hour),int(minute),int(second[0]))
 
+
+def make_indexed_dict(close,time):
+    idxtime = {}
+    idxclose = {}
+    for idx, tc in enumerate(zip(time, close)):
+        idxtime[idx] = tc[0]
+        idxclose[idx] = tc[1]
+    return  idxclose,idxtime
+
 def get_today_df(company_name='nifty',today = 20140505):
     base = 'dataset'
     path = base + f"""/{company_name}/{company_name}.csv"""
@@ -85,15 +93,10 @@ def get_today_df(company_name='nifty',today = 20140505):
     todaydf = data.loc[flt]
 
     time = todaydf['time'].apply(lambda x:clean(x,today))
-    time = [ts.to_pydatetime()   for ts in time]
-
+    time = [ts.to_pydatetime().strftime('%H:%M')   for ts in time]
     close = list(todaydf['close'])
-    idxtime = {}
-    idxclose = {}
-    for idx, tc in enumerate(zip(time, close)):
-        idxtime[idx] = tc[0]
-        idxclose[idx] = tc[1]
-    return idxclose, idxtime
+    return close,time
+
 
 def matplot(df,time):
     global mx,mn
@@ -108,10 +111,22 @@ def matplot(df,time):
     myFmt = mdates.DateFormatter('%H:%M')
     plt.gca().xaxis.set_major_formatter(myFmt)
     plt.show()
-    
+
+def init_mxmn():
+    global mx,mn,short_not
+    mx = list()
+    mn = list()
+    short_not = list()
+
+def idx_to_time(idxtime,idx):
+    return idxtime[idx]
+
 def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window = 30):
+
+    init_mxmn()
     global mx,mn
-    df, idxtime= get_today_df(company_name,0)
+    close,time = get_today_df(company_name,0)
+    df, idxtime = make_indexed_dict(close,time)
     time = list(idxtime.values())
 
     peak,truf = gen_peaks(df)
@@ -119,18 +134,18 @@ def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window =
     mxmn = sorted(zip(mx,mn,short_not),key=lambda x:money(x[0],x[1],df),reverse=True)[:num_of_points]
     mx, mn ,sn= zip(*mxmn)
 
-    matplot(df,time)
+    # matplot(df,time)
 
-    bestpts = []
+    actual_invest_points = []
     for buy,sell,short in zip(mn,mx,sn):
-        bestpts.append( {
-            'Buy': buy,
-            'Sell':sell,
+        actual_invest_points.append( {
+            'Buy': idx_to_time(idxtime,buy),
+            'Sell':idx_to_time(idxtime,sell),
             'Short':short,
-            'Predicted_Money': money(buy,sell,df),
+            'Actual_money': money(buy,sell,df),
         })
-
-    print(bestpts)
+    print(idxtime,time,sep='\n')
+    return actual_invest_points
 
 if __name__ == '__main__':
     bestpoints('nifty',
