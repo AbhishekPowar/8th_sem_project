@@ -2,6 +2,7 @@ import pandas as pd
 from random import choice
 from datetime import datetime
 from matplotlib import pyplot as plt
+import json
 import matplotlib.dates as mdates
 plt.style.use('seaborn-darkgrid')
 inf = 99999999999999
@@ -135,17 +136,19 @@ def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window =
     mx, mn ,sn= zip(*mxmn)
 
     # matplot(df,time)
-
+    my_json = dict()
+    my_json["close"] = list(df.values())
+    my_json["time"] = time
     actual_invest_points = []
     for buy,sell,short in zip(mn,mx,sn):
         actual_invest_points.append( {
-            'Buy': idx_to_time(idxtime,buy),
-            'Sell':idx_to_time(idxtime,sell),
-            'Short':short,
-            'Actual_money': money(buy,sell,df),
+            "Buy": idx_to_time(idxtime,buy),
+            "Sell":idx_to_time(idxtime,sell),
+            "Short":short,
+            "Actual_money": money(buy,sell,df),
         })
-    print(idxtime,time,sep='\n')
-    return actual_invest_points
+    my_json["actual"] = actual_invest_points
+    return json.dumps(my_json)
 
 if __name__ == '__main__':
     bestpoints('nifty',
