@@ -18,6 +18,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.actual_data),
-    path('invest',views.invest)
+
+    path('',views.index),
+    path('data', views.actual_data),
+    path('invest',views.invest),
+    path('predict',views.predict)
 ]

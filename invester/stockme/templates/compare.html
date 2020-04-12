@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+     <div id="container" style="width: 75%;">
+    <canvas id="pie-chart"></canvas>
+  </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
+
+  <script>
+    var timeFormat = 'HH:MM';
+    var config = {
+      type: 'line',
+      data: {
+        datasets: [{
+          data: {{ data|safe }},
+          borderColor: "{{clr}}",
+          label: 'Stock Price in Rs',
+            fill: false
+        }],
+        labels: {{ labels|safe }}
+      },
+      options: {
+    scales: {
+        xAxes: [{
+            type: 'time',
+            time: {
+                format: "HH:mm",
+
+            }
+        }]
+    },
+          elements: {
+                    point:{
+                        radius: 0
+                    }
+                }
+}
+    };
+
+    window.onload = function() {
+      var ctx = document.getElementById('pie-chart').getContext('2d');
+      window.myPie = new Chart(ctx, config);
+    };
+
+  </script>
+
+</body>
+</html>

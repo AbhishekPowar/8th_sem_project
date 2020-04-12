@@ -7,7 +7,11 @@
 <body>
     <hr>
     {% for name in company_names %}
-       {{name|upper}}
+       {{name|upper}} 
+       <a href='http://127.0.0.1:8000/invest?name={{name|lower}}'>Invest</a>
+       <br>
+       <a href='http://127.0.0.1:8000/data?name={{name|lower}}'>TODAY</a>
+       <a href='http://127.0.0.1:8000/predict?name={{name|lower}}'>ALL</a>
         <hr>
     {% endfor %}
 </body>

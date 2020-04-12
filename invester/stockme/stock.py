@@ -10,6 +10,7 @@ ninf = -inf
 mx = list()
 mn = list()
 short_not  = list()
+DATASET = 'stockme/dataset'
 
 def money(x,y,df):
     return round(abs(df[x]-df[y]),2)
@@ -86,7 +87,7 @@ def make_indexed_dict(close,time):
     return  idxclose,idxtime
 
 def get_today_df(company_name='nifty',today = 20140505):
-    base = 'dataset'
+    base = DATASET
     path = base + f"""/{company_name}/{company_name}.csv"""
     data = pd.read_csv(path)
     today = choice(list(set(data['date'])))
@@ -98,6 +99,16 @@ def get_today_df(company_name='nifty',today = 20140505):
     close = list(todaydf['close'])
     return close,time
 
+def get_all_actual(company_name='nifty'):
+    base = DATASET
+    path = base + f"""/{company_name}/{company_name}.csv"""
+    data = pd.read_csv(path)
+    howmany = 5000
+    step = 180
+    close = list(data['close'])[::step]
+    time = list(data['date'].apply(str)+ data['time'])[::step]
+    time.sort()
+    return  close, time
 
 def matplot(df,time):
     global mx,mn
