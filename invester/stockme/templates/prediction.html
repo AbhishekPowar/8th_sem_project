@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block content %}
 
      <div id="container" style="width: 75%;">
     <canvas id="pie-chart"></canvas>
@@ -44,6 +39,4 @@
     };
 
   </script>
-
-</body>
-</html>
+{% endblock %}

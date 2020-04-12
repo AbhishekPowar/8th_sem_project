@@ -6,26 +6,30 @@ import json
 DATASET = 'stockme/dataset'
 # Create your views here.
 def index(request):
-    # company_names = listdir('./dataset')
     company_names = listdir(DATASET)
     return  render(request,'index.html',{'company_names':company_names})
 
 
 def invest(request):
     cname = request.GET.get('name')
-    actual_points = stock.bestpoints(cname)
-    return render(request,'invest.html',actual_points)
+    data = stock.bestpoints(cname)
+    actual_points = data['actual']
+    today = data['today']
+    return render(request,'invest.html',{'actual': actual_points, 'today': today})
 
 
-def actual_data(request):
-    close, time = stock.get_today_df('nifty')
+def today(request):
+    cname = request.GET.get('name')
+    close, time, today = stock.get_today_df(cname,20140505)
+    data2, time2 , today= stock.get_today_df(cname,20140506)
+
     clor = '#3cba9f' if close[-1] > close[0] else '#FF0000'
     mydict = {
         "close":close,
         "time" :time
     }
-    return render(request,'compare.html',{'labels': time,
-        'data': close,'clr':clor})
+    return render(request,'today.html',{'time': time,
+        'actualdata': close,'clr':clor, 'prediction':data2})
 
 def predict(request):
     cname = request.GET.get('name')

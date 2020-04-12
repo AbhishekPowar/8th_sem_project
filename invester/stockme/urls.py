@@ -20,7 +20,8 @@ from . import views
 urlpatterns = [
 
     path('',views.index),
-    path('data', views.actual_data),
+    path('home',views.index),
+    path('today', views.today),
     path('invest',views.invest),
     path('predict',views.predict)
 ]

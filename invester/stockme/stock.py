@@ -89,6 +89,7 @@ def make_indexed_dict(close,time):
 def get_today_df(company_name='nifty',today = 20140505):
     base = DATASET
     path = base + f"""/{company_name}/{company_name}.csv"""
+
     data = pd.read_csv(path)
     today = choice(list(set(data['date'])))
     flt = (data['date'] == today)
@@ -97,14 +98,13 @@ def get_today_df(company_name='nifty',today = 20140505):
     time = todaydf['time'].apply(lambda x:clean(x,today))
     time = [ts.to_pydatetime().strftime('%H:%M')   for ts in time]
     close = list(todaydf['close'])
-    return close,time
+    return close,time, today
 
 def get_all_actual(company_name='nifty'):
     base = DATASET
     path = base + f"""/{company_name}/{company_name}.csv"""
     data = pd.read_csv(path)
-    howmany = 5000
-    step = 180
+    step = 500
     close = list(data['close'])[::step]
     time = list(data['date'].apply(str)+ data['time'])[::step]
     time.sort()
@@ -139,7 +139,7 @@ def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window =
 
     init_mxmn()
     global mx,mn
-    close,time = get_today_df(company_name,0)
+    close,time,today = get_today_df(company_name)
     df, idxtime = make_indexed_dict(close,time)
     time = list(idxtime.values())
 
@@ -159,6 +159,7 @@ def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window =
             "Actual_money": money(buy,sell,df),
         })
     my_dict["actual"] = actual_invest_points
+    my_dict['today'] = today
     return my_dict
 
 if __name__ == '__main__':
@@ -166,3 +167,6 @@ if __name__ == '__main__':
                want_to_short=0,
                num_of_points=3,
                window=30)
+    # c,t = get_today_df('tcs')
+    # print(c,t)
+

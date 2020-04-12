@@ -1,18 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>HOME</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block content %}
+
     <hr>
+
     {% for name in company_names %}
-       {{name|upper}} 
-       <a href='http://127.0.0.1:8000/invest?name={{name|lower}}'>Invest</a>
-       <br>
-       <a href='http://127.0.0.1:8000/data?name={{name|lower}}'>TODAY</a>
-       <a href='http://127.0.0.1:8000/predict?name={{name|lower}}'>ALL</a>
+       <div class="block">
+        <span class ='companyname'> {{name|upper}}</span>
+        <div class="links">
+
+            <a href='http://127.0.0.1:8000/invest?name={{name|lower}}'>Invest</a>
+           <a href='http://127.0.0.1:8000/today?name={{name|lower}}'>Today's pediction</a>
+           <a href='http://127.0.0.1:8000/predict?name={{name|lower}}'>Prediction all</a>
+        </div>
+       </div>
         <hr>
     {% endfor %}
-</body>
-</html>
+{% endblock %}
