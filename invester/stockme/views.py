@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from os import listdir
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from . import stock
 import json
 DATASET = 'stockme/dataset'
@@ -9,17 +9,30 @@ def index(request):
     company_names = listdir(DATASET)
     return  render(request,'index.html',{'company_names':company_names})
 
+def landingPage(request):
+    company_names = listdir(DATASET)
+    return  render(request,'landingPage.html',{'company_names':company_names})
+
 
 def invest(request):
-    cname = request.GET.get('name')
-    data = stock.bestpoints(cname)
+    short = request.GET.get('short',0)
+    count = request.GET.get('count',3)
+    timeWindow = request.GET.get('timeWindow',30)
+    short = int(short)
+    count = int(count)
+    timeWindow = int(timeWindow)
+    cname = 'tcs'
+    data = stock.bestpoints(cname,short, count, timeWindow)
     actual_points = data['actual']
     today = data['today']
-    return render(request,'invest.html',{'actual': actual_points, 'today': today})
+    datajson =  {"actual": actual_points, "today": today}
+    return JsonResponse(datajson)
+    # return render(request,'invest.html',{'actual': actual_points, 'today': today})
 
 
 def today(request):
     cname = request.GET.get('name')
+    cname = 'tcs'
     close, time, today = stock.get_today_df(cname,20140505)
     data2, time2 , today= stock.get_today_df(cname,20140506)
 
@@ -28,6 +41,7 @@ def today(request):
         "close":close,
         "time" :time
     }
+    return JsonResponse({'labels':time,'data':close, 'predictionData': data2})
     return render(request,'today.html',{'time': time,
         'actualdata': close,'clr':clor, 'prediction':data2})
 

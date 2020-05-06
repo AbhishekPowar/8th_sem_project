@@ -28,21 +28,21 @@
         labels: {{ time|safe }}
       },
       options: {
-    scales: {
-        xAxes: [{
-            type: 'time',
-            time: {
-                format: "HH:mm",
+      scales: {
+          xAxes: [{
+              type: 'time',
+              time: {
+                  format: "HH:mm",
 
-            }
-        }]
-    },
-          elements: {
-                    point:{
-                        radius: 0
-                    }
+              }
+          }]
+      },
+      elements: {
+                point:{
+                    radius: 0
                 }
-}
+      }
+        }
     };
 
     window.onload = function() {

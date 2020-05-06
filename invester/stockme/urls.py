@@ -19,7 +19,7 @@ from . import views
 
 urlpatterns = [
 
-    path('',views.index),
+    path('',views.landingPage),
     path('home',views.index),
     path('today', views.today),
     path('invest',views.invest),
