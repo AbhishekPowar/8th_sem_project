@@ -1,5 +1,7 @@
 import pickle
 import pandas as pd
+from sklearn.preprocessing import StandardScaler 
+from sklearn.linear_model  import LinearRegression
 def predictor(from_date,to_date):#enter date as yyyymmdd
     file = input("Enter company name:")
     loaded_model = pickle.load(open(file+'LinearRegression.pickle', 'rb'))
@@ -11,9 +13,9 @@ def predictor(from_date,to_date):#enter date as yyyymmdd
         for time in time_list:
             last_close=loaded_model.predict([[date ,time,last_close]])
             predictions.loc[len(predictions)] = [date,time,last_close]
-    return predictions
+    return predictions  ## returns a dataframe
 
 
 ##run as 
-## preds = prediction(date,date)
+##preds = prediction(date,date) --->yyyymmdd,yyyymmdd
 ##print(preds)
