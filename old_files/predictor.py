@@ -17,5 +17,5 @@ def predictor(from_date,to_date):#enter date as yyyymmdd
 
 
 ##run as 
-##preds = prediction(date,date) --->yyyymmdd,yyyymmdd
+##preds = predictor(date,date) --->yyyymmdd,yyyymmdd
 ##print(preds)
