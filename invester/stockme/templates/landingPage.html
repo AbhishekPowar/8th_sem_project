@@ -7,23 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
     <title>Document</title>
-    <style>
-        /*input{
-            margin-bottom: 10px;
-        }
-        .grid{
-            align-items: center;
-             display: grid;
-             justify-content: center;
-        }
-        .input-box{
-            display: grid;
-            align-items: center;
-
-        }*/
-
-    </style>
 </head>
 <body class="grey lighten-3">
     <h1 id='header'>Landing page  </h1>
@@ -34,7 +19,7 @@
                 <canvas id="myChart"></canvas>
             </div>
         </div>
-        <div class="col m4 s12 card">
+        <div class="col m4 s12 card" id='divForm'>
             <form id='myForm' class="grid " >
                 <div class="input-box">
                     <h4>Enter your Choice</h4>

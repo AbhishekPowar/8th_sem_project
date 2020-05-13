@@ -1,58 +1,10 @@
-a{
-text-decoration : none;
-color:#14a76c;
-
+#divForm {
+	height: 400px;
+	/* max-height: 400px; */
+	overflow-y: scroll;
 }
 
-body {
-  background-color: #272727;
-  font-family:  Charcoal, sans-serif;
-
-}
-
-.companyname ,h2{
-  font-size: 20px;
-  font-weight: bold;
-  font-family:  Charcoal, sans-serif;
-
-color:#FFe400;
-}
-
-.links{
-float:right
-}
-
-.links a{
-padding : 8px 16px;
-margin-left : 10px;
-margin-right : 10px;
-background-color: #14a76c;
-color : #272727;
-border-radius: 5px;
-}
-
-.block{
-padding-top: 10px;
-padding-bottom: 10px
-}
-h4{
-    color:#14a76c;
-
-}
-#navbar a{
-    float : left;
-    padding : 8px 16px;
-    color : #272727;
-    background-color: #14a76c;
-    margin-left : 10px;
-margin-right : 10px;
-border-radius: 5px;
-
-
-
-
-
-
-
-
+.key {
+	font-weight: bold;
+	font-size: medium;
 }
