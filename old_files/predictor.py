@@ -11,6 +11,7 @@ def predictor(from_date,to_date):#enter date as yyyymmdd
     predictions = pd.DataFrame(columns = cols)
     for date in range(from_date,to_date):
         for time in time_list:
+            last_close=loaded_model.predict([[date ,time,last_close]])
             res = str(last_close)[1:-1]
             predictions.loc[len(predictions)] = [date,time,res]
     return predictions  ## returns a dataframe
