@@ -88,18 +88,33 @@ def make_indexed_dict(close,time):
         idxclose[idx] = tc[1]
     return  idxclose,idxtime
 
-def get_today_df(company_name='nifty',today = 20140505):
+def get_today_df(company_name='nifty',today = 20140505, prediction=False):
+    # TEMP : checks whether data access if for predition or not
+    if prediction:
+        pred = 'Prediction'
+    else:
+        pred = ''
+
     base = DATASET
-    path = base + f"""/{company_name}/{company_name}.csv"""
+    path = base + f"""/{company_name}/{company_name}25{pred}.csv"""
+    # path = base + f"""/{company_name}/{company_name}.csv"""
 
     data = pd.read_csv(path)
     today = choice(list(set(data['date'])))
     flt = (data['date'] == today)
     todaydf = data.loc[flt]
 
-    time = todaydf['time'].apply(lambda x:clean(x,today))
-    time = [ts.to_pydatetime().strftime('%H:%M')   for ts in time]
+    #TEMP : Making data accesible
+    time = list(todaydf['time'])
+
+    #Reformats data according to need
+    if not prediction:
+        time = todaydf['time'].apply(lambda x: clean(x, today))
+        time = [ts.to_pydatetime().strftime('%H:%M') for ts in time]
     close = list(todaydf['close'])
+    print(len(todaydf))
+    if prediction:
+        close = [float(i[1:-1]) for i in list(todaydf['close'])]
     return close,time, today
 
 def get_all_actual(company_name='nifty'):

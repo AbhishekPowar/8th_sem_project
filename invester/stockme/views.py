@@ -33,15 +33,17 @@ def invest(request):
 def today(request):
     cname = request.GET.get('name')
     cname = 'tcs'
-    close, time, today = stock.get_today_df(cname,20140505)
-    data2, time2 , today= stock.get_today_df(cname,20140506)
+    date = 20150703
+    date = 20150422
+    close, time, todayActual = stock.get_today_df(cname,date)
+    data2, time2 , todayPred= stock.get_today_df(cname,date,True)
 
     clor = '#3cba9f' if close[-1] > close[0] else '#FF0000'
     mydict = {
         "close":close,
         "time" :time
     }
-    return JsonResponse({'labels':time,'data':close, 'predictionData': data2})
+    return JsonResponse({'labels':time,'data':close, 'predictionData': data2,'actDate': todayActual,'predDatee':todayPred})
     return render(request,'today.html',{'time': time,
         'actualdata': close,'clr':clor, 'prediction':data2})
 
