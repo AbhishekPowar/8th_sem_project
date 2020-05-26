@@ -59,7 +59,6 @@ $(document).ready(function() {
 			let labels = result.labels;
 			let data = result.data;
 			let predictionData = result.predictionData;
-			console.log(result)
 			console.log(`Actual ${result.actDate}\nPrediction ${result.predDatee}`)
 			showGraph(labels, data, predictionData);
 		}

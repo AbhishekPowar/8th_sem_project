@@ -100,7 +100,7 @@ def get_today_df(company_name='nifty',today = 20140505, prediction=False):
     # path = base + f"""/{company_name}/{company_name}.csv"""
 
     data = pd.read_csv(path)
-    today = choice(list(set(data['date'])))
+    # today = choice(list(set(data['date'])))
     flt = (data['date'] == today)
     todaydf = data.loc[flt]
 
@@ -113,8 +113,8 @@ def get_today_df(company_name='nifty',today = 20140505, prediction=False):
         time = [ts.to_pydatetime().strftime('%H:%M') for ts in time]
     close = list(todaydf['close'])
     print(len(todaydf))
-    if prediction:
-        close = [float(i[1:-1]) for i in list(todaydf['close'])]
+    # if prediction:
+    #     close = [float(i[1:-1]) for i in list(todaydf['close'])]
     return close,time, today
 
 def get_all_actual(company_name='nifty'):

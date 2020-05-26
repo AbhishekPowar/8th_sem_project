@@ -33,8 +33,8 @@ def invest(request):
 def today(request):
     cname = request.GET.get('name')
     cname = 'tcs'
-    date = 20150703
-    date = 20150422
+    date = 20150427
+    # date = 20150422
     close, time, todayActual = stock.get_today_df(cname,date)
     data2, time2 , todayPred= stock.get_today_df(cname,date,True)
 
