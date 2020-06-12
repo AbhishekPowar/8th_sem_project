@@ -23,5 +23,8 @@ urlpatterns = [
     path('home',views.index),
     path('today', views.today),
     path('invest',views.invest),
-    path('predict',views.predict)
+    path('predict',views.predict),
+    path('autoComplete', views.autoComplete),
+    path('money', views.money),
+
 ]

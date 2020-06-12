@@ -20,6 +20,7 @@ $(document).ready(function() {
 		let count = document.getElementById('count').value;
 		let timeWindow = document.getElementById('timeWindow').value;
 		let short = document.getElementById('short').value;
+		let datePanel = localStorage.getItem('datePanel');
 
 		$.ajax({
 			url: 'invest',
@@ -27,7 +28,8 @@ $(document).ready(function() {
 			data: {
 				count: count,
 				timeWindow: timeWindow,
-				short: short
+				short: short,
+				datePanel: datePanel
 			},
 			success: function(result) {
 				let today = result.today;
@@ -39,30 +41,55 @@ $(document).ready(function() {
 				output = `Best points for ${today}`;
 				for (combo of dataPoints) {
 					ind++;
-					output += `<div class="input-box">
+
+					divr = `<div class="input-box">
                             <hr>
                             <p><span class='key'>Buy</span> : ${combo.Buy}</p>
                             <p><span class='key'>Sell</span> : ${combo.Sell}</p>
                             <p><span class='key'>Short</span> : ${combo.Short}</p>
                             <p><span class='key'>Difference</span> : ${combo.Actual_money}</p>
-                            </div>`;
+							</div>`;
+					if (combo.Short == true) {
+						divr = `<div class="input-box">
+                            <hr>
+                            <p><span class='key'>Sell</span> : ${combo.Sell}</p>
+                            <p><span class='key'>Buy</span> : ${combo.Buy}</p>
+                            <p><span class='key'>Short</span> : ${combo.Short}</p>
+                            <p><span class='key'>Difference</span> : ${combo.Actual_money}</p>
+							</div>`;
+					}
+
+					output += divr;
 				}
 				ul.innerHTML = output;
 				mydiv.html(output);
 			}
 		});
 	}
+	function insertDate(result) {
+		myDate = String(result.actDate);
 
-	$.ajax({
-		url: 'today',
-		success: function(result) {
-			let labels = result.labels;
-			let data = result.data;
-			let predictionData = result.predictionData;
-			console.log(`Actual ${result.actDate}\nPrediction ${result.predDatee}`)
-			showGraph(labels, data, predictionData);
-		}
-	});
+		document.getElementById('dateToday').innerText =
+			myDate.slice(0, 4) + '-' + myDate.slice(4, 6) + '-' + myDate.slice(6, 8);
+	}
+	function main() {
+		todayd = localStorage.getItem('datePanel');
+		let datePanel = localStorage.getItem('datePanel');
+		$.ajax({
+			url: 'today',
+			data: {
+				today: todayd
+			},
+			success: function(result) {
+				let labels = result.labels;
+				let data = result.data;
+				let predictionData = result.predictionData;
+				insertDate(result);
+				console.log(`Actual ${result.actDate}\nPredictions ${result.predDatee}`);
+				showGraph(labels, data, predictionData);
+			}
+		});
+	}
 
 	function showGraph(labels, data, predictionData) {
 		var ctx = document.getElementById('myChart').getContext('2d');
@@ -76,14 +103,14 @@ $(document).ready(function() {
 				labels: labels,
 				datasets: [
 					{
-						label: 'My First dataset',
-						borderColor: 'rgb(255,0,0)',
+						label: 'Actual',
+						borderColor: 'rgb(0,255,0)',
 						data: data,
 						fill: false
 					},
 					{
-						label: 'My Second dataset',
-						borderColor: 'rgb(0,255,0)',
+						label: 'Prediction',
+						borderColor: 'rgb(0,0,255)',
 						data: predictionData,
 						fill: false
 					}
@@ -100,4 +127,42 @@ $(document).ready(function() {
 			}
 		});
 	}
+
+	function complete() {
+		console.log('hit1');
+		jQuery(function() {
+			$('#autocomplete-input').on('keyup', function() {
+				var value = $(this).val();
+
+				let x = $.ajax({
+					url: 'autoComplete',
+					data: {
+						search: value
+					},
+					dataType: 'json',
+					success: function(data) {
+						list = data.list;
+						console.log(Object.keys(list).length);
+						var elems = document.querySelector('.autocomplete');
+						var instances = M.Autocomplete.init(elems, { data: list, limit: 5, onAutocomplete: init });
+						instances.open();
+						return 100;
+					}
+				});
+				console.log(x, 'x');
+			});
+		});
+	}
+	function init() {
+		today = document.getElementById('autocomplete-input').value;
+		localStorage.setItem('datePanel', today);
+		document.querySelector('.mypage').style.display = 'block';
+		main();
+		var elems = document.querySelectorAll('.timepicker');
+		var instances = M.Timepicker.init(elems, {
+			twelveHour: false,
+			autoClose: true
+		});
+	}
+	complete();
 });

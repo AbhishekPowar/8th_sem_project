@@ -15,7 +15,8 @@ short_not  = list()
 DATASET = 'stockme/dataset'
 
 def money(x,y,df):
-    return round(abs(df[x]-df[y]),2)
+    return round((df[y]-df[x]),2)
+    return round(abs(df[y]-df[x]),2)
 
 def gen_peaks(df):
     peak = dict()
@@ -91,18 +92,21 @@ def make_indexed_dict(close,time):
 def get_today_df(company_name='nifty',today = 20140505, prediction=False):
     # TEMP : checks whether data access if for predition or not
     if prediction:
-        pred = 'Prediction'
+        pred = 'Predictions'
     else:
-        pred = ''
+        pred = 'Test'
 
     base = DATASET
-    path = base + f"""/{company_name}/{company_name}25{pred}.csv"""
+    path = base + f"""/{company_name}/{company_name}{pred}2.csv"""
     # path = base + f"""/{company_name}/{company_name}.csv"""
 
     data = pd.read_csv(path)
     # today = choice(list(set(data['date'])))
     flt = (data['date'] == today)
     todaydf = data.loc[flt]
+
+
+    # todaydf =  data
 
     #TEMP : Making data accesible
     time = list(todaydf['time'])
@@ -152,11 +156,11 @@ def idx_to_time(idxtime,idx):
 
 
 
-def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window = 30):
+def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window = 30,datePanel=20140505):
 
     init_mxmn()
     global mx,mn
-    close,time,today = get_today_df(company_name)
+    close,time,today = get_today_df(company_name,datePanel,True)
     df, idxtime = make_indexed_dict(close,time)
     time = list(idxtime.values())
 
@@ -165,16 +169,22 @@ def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window =
     mxmn = sorted(zip(mx,mn,short_not),key=lambda x:money(x[0],x[1],df),reverse=True)[:num_of_points]
     mx, mn ,sn= zip(*mxmn)
 
+    closeO, timeO, todayO = get_today_df(company_name, datePanel)
+    dfO, idxtimeO = make_indexed_dict(closeO,timeO)
+
     # matplot(df,time)
     my_dict = dict()
     actual_invest_points = []
     for buy,sell,short in zip(mn,mx,sn):
-        actual_invest_points.append( {
-            "Buy": idx_to_time(idxtime,buy),
-            "Sell":idx_to_time(idxtime,sell),
-            "Short":short,
-            "Actual_money": money(buy,sell,df),
+        actual_invest_points.append({
+            "Buy": idx_to_time(idxtime, buy),
+            "Sell": idx_to_time(idxtime, sell),
+            "Short": short,
+            "Actual_money": money(buy, sell, dfO),
         })
+
+
+    actual_invest_points.sort(key=lambda d:d['Actual_money'],reverse=True)
     my_dict["actual"] = actual_invest_points
     my_dict['today'] = today
     return my_dict
@@ -195,6 +205,30 @@ def predictor(from_date,to_date):#enter date as yyyymmdd
             last_close=loaded_model.predict([[date ,time,last_close]])
             predictions.loc[len(predictions)] = [date,time,last_close]
     return predictions
+
+def allDates(company_name):
+    pred = 'Predictions'
+    base = DATASET
+    path = base + f"""/{company_name}/{company_name}{pred}2.csv"""
+
+    data = pd.read_csv(path)
+    alllist = list(set(data['date']))
+    alllist = list(map(str,alllist))
+    alllist.sort()
+    return  alllist
+
+def buySell(cname,today,start,end):
+    closeO, timeO, todayO = get_today_df(cname, today)
+    dfO, idxtimeO = make_indexed_dict(closeO, timeO)
+
+    try:
+        mapinv = {}
+        mapinv.update(zip(idxtimeO.values(), idxtimeO.keys()))
+        buy, sell = mapinv[start], mapinv[end]
+        return round(dfO[sell]-dfO[buy],2)
+    except :
+        return  'Time format error'
+
 
 
 
