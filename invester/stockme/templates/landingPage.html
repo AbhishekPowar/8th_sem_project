@@ -6,11 +6,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> -->
         <style>
+                *{
+                    box-sizing: border-box;
+                }
                 .PL {
                      display: flex;
                     flex-direction: row;
@@ -18,36 +23,83 @@
                     align-items:  center;
                     height:60px;
                 }
+                #header {
+                    margin: 10px;
+                    padding: 10px;
+                }
+                #head {
+                    margin: 10px;
+                    padding: 10px;
+                    padding-left: 50px;
+                }
+                .bar{
+                    margin: 0;
+                    padding: 0;
+                    padding: 10px /*40px;*/
+                }
+                .date{
+                    font-size: 12px;
+                }
+                .row,
+                .col,
+                .card,
+                .m6,
+                .l6,
+                .m12,
+                .l12,
+                .input-box{
+                    padding: 0px;
+                    margin: 0;
+                }
         </style>
     <link rel="stylesheet" href="{% static 'style.css' %}">
     <title>Document</title>
 </head>
 <body class="grey lighten-3">
     <div>
-        <h1 id='header'>Landing page</h1>
-        <div class="input-field">
+        <div id="header" class="blue lighten-2">
+            <a href="company">
+                <i class="material-icons black-text" style="display: inline-block" >arrow_back</i>
+            </a>
+            <h1 id='head' style="display: inline"></h1>
+            
+        </div>
+        </h1>
+        <div class="input-field" style="margin: 20px">
             <input type="text" id="autocomplete-input" class="autocomplete">
-            <label for="autocomplete-input">Choose Date</label>
+            <label for="autocomplete-input">Choose Date format       (YYYYMMDD)</label>
         </div>
 
     </div>
     <br>
     <div class="mypage" style="display: none">
+        <!-- //Graph -->
         <div class="row">
             <div class="col m8 s12">
-                <div>
-                    <span>Today</span>
-                    <span id="dateToday">5</span>
-                </div>
+                
                 <div id='canvasDiv' class="" >
+                    <h4 class="blue lighten-2 bar">Graph<span id="dateToday" class='right date'>5</span></h4>
                     <canvas id="myChart"></canvas>
                 </div>
             </div>
+            <!-- //prediction -->
             <div class="col m4 s12 card" id='divForm'>
                 <form id='myForm' class="grid " >
                     <div class="input-box">
-                        <h4>Enter your Choice</h4>
+                        <h4 class="blue lighten-2 bar">Enter your Choice</h4>
                     </div>
+                    <div id='which' class="PL">
+                        <label >
+                            <input class='with-gap' type="radio" name='g1' value="actual" checked>
+                            <span class="black-text">Actual</span>
+                          </label>
+                          <label >
+                            <input type="radio" class='with-gap' name='g1' value='prediction'  >
+                            <span class="black-text">Prediction</span>
+                          </label>
+                    </div>
+
+
                     <div class="input-box">
                         <label for="">Count</label>
                         <input type="text" name="" id="count" value="3">
@@ -67,19 +119,19 @@
 
                 </form>
                 <div id="mydiv" class="grid">
-                    <h4>Best Points <button class="btn red circular circle" id='close'>X</button></h4>
+                    <h4 class="blue lighten-2 bar" style=''>Best Points <button class="btn red circular circle right" id='close' >X</button></h4>
                     <div id="mydiv2"></div>
                 </div>
 
             </div>
         </div>
         <hr>
-
+        <!-- //Invest -->
         <div class="row">
             <div class="col m6 s12 card">
                 <form id="buySell">
-                    <div class="input-box col m12">
-                        <h4>Enter your Choice</h4>
+                    <div class="input-box col m12" style="margin-bottom: 60px">
+                        <h4 class="blue lighten-2 bar">Enter your Choice <span id='dateme' class='right date'></span></h4>
                     </div>
                     <div class="pair">
                         <div class="input-box col m6">
@@ -93,8 +145,10 @@
                     </div>
                 </form>
                 <div class="input-box col m12 l12">
+                    <div style="height:60px"></div>
                     <button class="btn blue" id='add'>Add</button>
                     <button class="btn blue" id='calculate'>Calculate</button>
+                    <div style="height: 40px"></div>
                 </div>
             </div>
             <div class="col m6 s12">

@@ -27,8 +27,13 @@ $(document).ready(function() {
 
 	$('#calculate').click(async function() {
 		let out = document.getElementById('output');
-
-		out.innerText = '';
+		let datePanel = localStorage.getItem('datePanel');
+		todayDate = myDate.slice(0, 4) + '-' + myDate.slice(4, 6) + '-' + myDate.slice(6, 8);
+		var cname = localStorage.getItem('cname').toLowerCase();
+		// var df = localStorage.getItem('cname').toLowerCase();
+		dfName = document.querySelector('input[type=radio]:checked').value;
+		term = dfName[0].toUpperCase() + dfName.slice(1, dfName.length);
+		out.innerText = `<div height='60px'></div>`;
 		out.innerHTML = `<div height='60px'></div>`;
 		for (let p = 1; p <= i; p++) {
 			let buy = $(`#buy${p}`).val();
@@ -38,7 +43,7 @@ $(document).ready(function() {
 			// let sell = $(`#sell${p}`).val();
 			let ans = document.createElement('div');
 			// var response = await fetch(`127.0.0.1:8000/money?start=${buy}&end=${sell}&today=${today}`);
-			var response = await fetch(`money?start=${buy}&end=${sell}&today=${today}`);
+			var response = await fetch(`money?start=${buy}&end=${sell}&today=${today}&cname=${cname}`);
 			var data = await response.json();
 			ans.innerText = data.profit;
 			term = 'Profit';

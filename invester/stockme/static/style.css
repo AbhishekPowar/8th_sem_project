@@ -1,4 +1,9 @@
-#divForm {
+/* #divForm {
+	height: 400px;
+	
+	overflow-y: scroll;
+} */
+#mydiv2 {
 	height: 400px;
 	/* max-height: 400px; */
 	overflow-y: scroll;
@@ -8,10 +13,8 @@
 	font-weight: bold;
 	font-size: medium;
 }
-
-.PL {
-	/* display: flex;
+.buySellid > p {
+	display: flex;
 	flex-direction: row;
-	justify-content: space-evenly; */
-	background: red;
+	justify-content: space-between;
 }

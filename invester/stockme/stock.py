@@ -15,7 +15,7 @@ short_not  = list()
 DATASET = 'stockme/dataset'
 
 def money(x,y,df):
-    return round((df[y]-df[x]),2)
+    return round((df[x]-df[y]),2)
     return round(abs(df[y]-df[x]),2)
 
 def gen_peaks(df):
@@ -91,13 +91,23 @@ def make_indexed_dict(close,time):
 
 def get_today_df(company_name='nifty',today = 20140505, prediction=False):
     # TEMP : checks whether data access if for predition or not
+    # Old
+    # if prediction:
+    #     pred = 'Predictions'
+    # else:
+    #     pred = 'Test'
+
     if prediction:
-        pred = 'Predictions'
+        pred = '25Predictions'
     else:
-        pred = 'Test'
+        pred = '25'
 
     base = DATASET
-    path = base + f"""/{company_name}/{company_name}{pred}2.csv"""
+    # old
+    # path = base + f"""/{company_name}/{company_name}{pred}2.csv"""
+
+    path = base + f"""/{company_name}/{company_name}{pred}.csv"""
+
     # path = base + f"""/{company_name}/{company_name}.csv"""
 
     data = pd.read_csv(path)
@@ -116,7 +126,6 @@ def get_today_df(company_name='nifty',today = 20140505, prediction=False):
         time = todaydf['time'].apply(lambda x: clean(x, today))
         time = [ts.to_pydatetime().strftime('%H:%M') for ts in time]
     close = list(todaydf['close'])
-    print(len(todaydf))
     # if prediction:
     #     close = [float(i[1:-1]) for i in list(todaydf['close'])]
     return close,time, today
@@ -156,7 +165,7 @@ def idx_to_time(idxtime,idx):
 
 
 
-def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window = 30,datePanel=20140505):
+def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window = 30,datePanel=20140505,pred=True):
 
     init_mxmn()
     global mx,mn
@@ -169,18 +178,20 @@ def bestpoints(company_name='nifty',want_to_short = 0,num_of_points = 3,window =
     mxmn = sorted(zip(mx,mn,short_not),key=lambda x:money(x[0],x[1],df),reverse=True)[:num_of_points]
     mx, mn ,sn= zip(*mxmn)
 
-    closeO, timeO, todayO = get_today_df(company_name, datePanel)
-    dfO, idxtimeO = make_indexed_dict(closeO,timeO)
+    dfO = df
+    if pred:
+        closeO, timeO, todayO = get_today_df(company_name, datePanel)
+        dfO, idxtimeO = make_indexed_dict(closeO,timeO)
 
     # matplot(df,time)
     my_dict = dict()
     actual_invest_points = []
     for buy,sell,short in zip(mn,mx,sn):
         actual_invest_points.append({
-            "Buy": idx_to_time(idxtime, buy),
-            "Sell": idx_to_time(idxtime, sell),
+            "Buy": idx_to_time(idxtime, buy)[:5],
+            "Sell": idx_to_time(idxtime, sell)[:5],
             "Short": short,
-            "Actual_money": money(buy, sell, dfO),
+            "Actual_money": money(sell, buy, dfO),
         })
 
 
@@ -207,10 +218,10 @@ def predictor(from_date,to_date):#enter date as yyyymmdd
     return predictions
 
 def allDates(company_name):
-    pred = 'Predictions'
+    pred = '25Predictions'
     base = DATASET
-    path = base + f"""/{company_name}/{company_name}{pred}2.csv"""
-
+    path = base + f"""/{company_name}/{company_name}{pred}.csv"""
+    # print(path)
     data = pd.read_csv(path)
     alllist = list(set(data['date']))
     alllist = list(map(str,alllist))

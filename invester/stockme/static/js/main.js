@@ -1,7 +1,8 @@
 $(document).ready(function() {
 	//init hide div
 	$('#mydiv').hide();
-
+	var cname = localStorage.getItem('cname').toLowerCase();
+	document.querySelector('#head').innerText = cname.toUpperCase();
 	//Listening form best points input
 	document.querySelector('#formSubmit').addEventListener('click', function(e) {
 		e.preventDefault();
@@ -15,13 +16,14 @@ $(document).ready(function() {
 	});
 
 	function makePanel() {
+		let dfName = document.querySelector('input[type=radio]:checked').value;
+
 		$('#myForm').hide();
 		$('#mydiv').show();
 		let count = document.getElementById('count').value;
 		let timeWindow = document.getElementById('timeWindow').value;
 		let short = document.getElementById('short').value;
 		let datePanel = localStorage.getItem('datePanel');
-
 		$.ajax({
 			url: 'invest',
 			type: 'get',
@@ -29,33 +31,41 @@ $(document).ready(function() {
 				count: count,
 				timeWindow: timeWindow,
 				short: short,
-				datePanel: datePanel
+				datePanel: datePanel,
+				dfName: dfName,
+				cname: cname
 			},
 			success: function(result) {
 				let today = result.today;
 				let dataPoints = result.actual;
 				let mydiv = $('#mydiv2');
 				let ul = document.createElement('div');
-
+				let myDate = localStorage.getItem('datePanel');
+				let todayDate = myDate.slice(0, 4) + '-' + myDate.slice(4, 6) + '-' + myDate.slice(6, 8);
+				document.querySelector('#dateme').innerText = todayDate;
 				let ind = 0;
-				output = `Best points for ${today}`;
+				term = dfName[0].toUpperCase() + dfName.slice(1, dfName.length);
+				output = `${term} data   <span class='right'>${todayDate}</span>`;
 				for (combo of dataPoints) {
 					ind++;
-
-					divr = `<div class="input-box">
+					clr = 'green-text';
+					if (combo.Actual_money < 0) {
+						clr = 'red-text';
+					}
+					divr = `<div class="input-box buySellid">
                             <hr>
-                            <p><span class='key'>Buy</span> : ${combo.Buy}</p>
-                            <p><span class='key'>Sell</span> : ${combo.Sell}</p>
-                            <p><span class='key'>Short</span> : ${combo.Short}</p>
-                            <p><span class='key'>Difference</span> : ${combo.Actual_money}</p>
+                            <p><span class='key space'>Buy</span> <span class='valbs'>${combo.Buy}<span> </p>
+                            <p><span class='key space'>Sell</span>  <span class='valbs'>${combo.Sell}<span> </p>
+                            <p><span class='key space'>Short</span>  <span class='valbs'>${combo.Short}<span> </p>
+                            <p><span class='key space '>Difference</span>  <span class='valbs ${clr}'>${combo.Actual_money}<span> </p>
 							</div>`;
 					if (combo.Short == true) {
-						divr = `<div class="input-box">
+						divr = `<div class="input-box buySellid">
                             <hr>
-                            <p><span class='key'>Sell</span> : ${combo.Sell}</p>
-                            <p><span class='key'>Buy</span> : ${combo.Buy}</p>
-                            <p><span class='key'>Short</span> : ${combo.Short}</p>
-                            <p><span class='key'>Difference</span> : ${combo.Actual_money}</p>
+                            <p><span class='key space'>Sell</span>  <span class='valbs'>${combo.Sell}<span> </p>
+                            <p><span class='key space'>Buy</span> <span class='valbs'>${combo.Buy}<span> </p>
+                            <p><span class='key space'>Short</span>  <span class='valbs'>${combo.Short}<span> </p>
+                            <p><span class='key space' >Difference</span>  <span class='valbs ${clr}'>${combo.Actual_money}<span> </p>
 							</div>`;
 					}
 
@@ -72,13 +82,15 @@ $(document).ready(function() {
 		document.getElementById('dateToday').innerText =
 			myDate.slice(0, 4) + '-' + myDate.slice(4, 6) + '-' + myDate.slice(6, 8);
 	}
+
 	function main() {
 		todayd = localStorage.getItem('datePanel');
 		let datePanel = localStorage.getItem('datePanel');
 		$.ajax({
 			url: 'today',
 			data: {
-				today: todayd
+				today: todayd,
+				cname: cname
 			},
 			success: function(result) {
 				let labels = result.labels;
@@ -106,13 +118,15 @@ $(document).ready(function() {
 						label: 'Actual',
 						borderColor: 'rgb(0,255,0)',
 						data: data,
-						fill: false
+						fill: false,
+						hidden: false
 					},
 					{
 						label: 'Prediction',
 						borderColor: 'rgb(0,0,255)',
 						data: predictionData,
-						fill: false
+						fill: false,
+						hidden: true
 					}
 				]
 			},
@@ -137,7 +151,8 @@ $(document).ready(function() {
 				let x = $.ajax({
 					url: 'autoComplete',
 					data: {
-						search: value
+						search: value,
+						cname: cname
 					},
 					dataType: 'json',
 					success: function(data) {
@@ -163,6 +178,7 @@ $(document).ready(function() {
 			twelveHour: false,
 			autoClose: true
 		});
+		makePanel();
 	}
 	complete();
 });

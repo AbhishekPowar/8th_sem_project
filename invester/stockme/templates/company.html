@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.js"></script>
+    <style>
+        *,h1{
+            margin: 0;
+            padding: 0;
+        }
+        h1{
+            margin: 10px;
+            padding: 10px;
+        }
+
+        .company{
+            width: 100%;
+            height: 50px;
+            padding: 10px;
+            padding-left: 30px;
+            border: 1px solid black 
+        }
+        .company:hover{
+            background: rgba(163, 189, 187, 0.226);
+            
+            font-size: 1.5rem;
+        }
+        .cname{
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body class="">
+    <header class="teak">
+        <h1 class="blue lighten-2 card">Company</h1>
+    </header>
+    <div class="container">
+        {%for company in company_names%}
+        
+            <a href='' >
+                <div class="card company ">
+                    <span class='black-text  cname'>{{company}}</span>
+                </div>
+            </a>
+        {%endfor%}
+    </div>
+    <script>
+        function init(){
+            cards = document.querySelectorAll('a')
+            for (const card of cards) {
+            
+               card.addEventListener('click',(e)=>{
+               e.preventDefault()
+               console.log( )
+               if (e.target.querySelector('span')){
+                   saveCompany(e.target.querySelector('span').innerText)
+                   window.location = "/landingPage";
+                }
+
+            })   
+            }
+        }
+        init()
+        function saveCompany(cname){
+            localStorage.setItem('cname',cname);
+
+        }        
+    </script>
+</body>
+</html>
